@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+
+
+    <script src="./src/renderer.js"></script>
+    <script>
+
+        // 使用渲染器渲染出 virtual dom
+        const vnode = h('div', {class: 'inner'}, [
+            h('h2', null, '渲染器'),
+            h('button', {
+                'onClick': () => { console.log('click') },
+            }, '点击我')
+        ])
+        // 挂载
+        mount(vnode, app)
+    </script>
+</body>
+</html>

@@ -83,19 +83,15 @@ const patch = (n1, n2) => {
 
         // 2.2 删除旧的props
         for (const key in oldProps) {
+
             if (!(key in newProps)) {
-                if (key.startsWith('on')) {
-                    const value = oldProps[key]
-                    el.removeEventListener(key.slice(2).toLowerCase(), value)
-                } else {
-                    el.removeAttribute(key)
-                }
-            } else { 
-                // 如果是事件的话 要移除之前监听的事件
-                if (key.startsWith('on')) {
-                    const value = oldProps[key]
-                    el.removeEventListener(key.slice(2).toLowerCase(), value)
-                }
+                el.removeAttribute(key)
+            }
+            
+            // 如果是事件的话 要移除之前监听的事件
+            if (key.startsWith('on')) {
+                const value = oldProps[key]
+                el.removeEventListener(key.slice(2).toLowerCase(), value)
             }
         }
 

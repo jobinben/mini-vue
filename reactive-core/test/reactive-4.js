@@ -25,7 +25,8 @@ const watchEffect = (effect) => {
     activeEffect = null
 }
 
-
+// Map({key: value}) : key 是一个字符串
+// WeakMap({key(对象): value}) : key 是一个对象，弱引用 方便垃圾回收 
 /* targetMap = {
     
     {info对象} => { 
@@ -38,6 +39,7 @@ const watchEffect = (effect) => {
     }
 
 }
+
 */
 const targetMap = new WeakMap()
 function getDep(target, key) {
@@ -58,20 +60,72 @@ function getDep(target, key) {
     return dep
 }
 
+
 // vue3用proxy进行数据劫持
 function reactive(raw) {
     return new Proxy(raw, {
         get(target, key) {
             const dep = getDep(target, key)
-            dep.depend() // 收集依赖
+            dep.depend()
             return target[key]
         },
         set(target, key, newValue) {
             const dep = getDep(target, key)
-            if (target[key] !== newValue) {
+            if(target[key] !== newValue) {
                 target[key] = newValue
-                dep.notify() // 通知订阅者
+                dep.notify()
             }
         }
     })
 }
+
+
+
+// 测试代码
+const info = reactive({
+    age: 10,
+    name: 'jobin'
+})
+
+const bar = reactive({
+    counter: 18
+})
+
+
+// watchEffect 1
+watchEffect(() => {
+    // info.counter 触发到Getter函数 对应的counter属性下的depend() 收集这个函数
+    // info.name 也触发到Getter函数 对应的name属性下的depend() 收集这个函数
+    console.log('watchEffect 1: ', info.age * 2, info.name)
+})
+
+// watchEffect 2
+watchEffect(() => {
+    console.log('watchEffect 2: ', info.age * info.age, info.name)
+})
+
+// watchEffect 3
+watchEffect(() => {
+    console.log('watchEffect 3: ', info.name)
+})
+
+// watchEffect 4
+watchEffect(() => {
+    // bar.age 触发到Getter函数 对应的age属性下的depend() 收集这个函数
+    console.log('watchEffect 4: ', bar.counter)
+})
+
+// test 1
+info.age++
+
+// test 2
+// info.name = 'dabing'
+
+// test 3
+// bar.counter = 21
+
+
+/**
+ * 当触发到getter函数时，对应的key下的dep()就会收集这些触发它的函数。
+ * 只要执行到watchEffect函数，里面有变量触发到getter函数，就收集当前watchEffect的回调函数。
+ */

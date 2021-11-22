@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <div id="app"></div>
 
@@ -14,7 +16,7 @@
     <script>
 
         // 使用渲染器渲染出 virtual dom
-        const vnode = h('div', {class: 'inner'}, [
+        const vnode = h('div', { class: 'inner' }, [
             h('h2', null, '渲染器'),
             h('button', {
                 'onClick': () => { console.log('click') },
@@ -22,6 +24,24 @@
         ])
         // 挂载
         mount(vnode, app)
+
+        // 情况一: 创建一个新的结点 children为 字符串
+        // const newVnode = h('div', { class: 'outer', id: 'newID' }, 'this is a div')
+
+        // 情况二: 创建一个新的结点 children为 数组
+        const newVnode = h('div', { class: 'outer', id: 'newID' }, [
+            h('h2', null, '新的h2'),
+            h('button', {
+                'onClick': () => { console.log('don\'t click me！') },
+            }, '不要碰我')
+        ])
+
+        setTimeout(() => {
+            // 方便观察效果，设置个延时
+            // 进行patch对比
+            patch(vnode, newVnode)
+        }, 2000);
     </script>
 </body>
+
 </html>
